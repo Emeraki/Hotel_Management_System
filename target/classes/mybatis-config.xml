@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+    <!--配置日志，标准日志-->
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+
+    <!--别名-->
+    <typeAliases>
+        <package name="com.yh.pojo"/>
+    </typeAliases>
+
+    <!--引入插件-->
+    <plugins>
+
+        <!--引入paheHelper分页插件-->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!--reasonable 分页合理化参数 默认为false
+            当设置为true时，pageNum≤0 时会查询第一页
+            pageNum＞pages（超过总数时，会查询最后一页）
+            默认false时，直接根据参数进行查询-->
+            <property name="reasonable" value="true"/>
+        </plugin>
+    </plugins>
+
+
+
+    <mappers>
+        <mapper resource="com/yh/mapper/EmployeeMapper.xml"/>
+        <mapper resource="com/yh/mapper/MenuMapper.xml"/>
+        <mapper resource="com/yh/mapper/DeptMapper.xml"/>
+        <mapper resource="com/yh/mapper/FloorMapper.xml"/>
+        <mapper resource="com/yh/mapper/RoleMapper.xml"/>
+        <mapper resource="com/yh/mapper/UserMapper.xml"/>
+        <mapper resource="com/yh/mapper/OrdersMapper.xml"/>
+        <mapper resource="com/yh/mapper/CheckinMapper.xml"/>
+        <mapper resource="com/yh/mapper/CheckoutMapper.xml"/>
+        <mapper resource="com/yh/mapper/RoomMapper.xml"/>
+        <mapper resource="com/yh/mapper/Role_EmployeeMapper.xml"/>
+        <mapper resource="com/yh/mapper/RoomTypeMapper.xml"/>
+    </mappers>
+
+</configuration>

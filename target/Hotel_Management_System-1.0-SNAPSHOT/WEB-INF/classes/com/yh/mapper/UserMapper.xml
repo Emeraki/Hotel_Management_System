@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yh.dao.UserMapper">
+
+    <insert id="addUser" parameterType="com.yh.pojo.User">
+        insert into t_user(loginName, password, realName, idCard, phone, email, status, createDate, salt)
+        VALUES (#{loginName},#{password},#{realName},#{idCard},#{phone},#{email},#{status},#{createDate},#{salt})
+    </insert>
+
+    <select id="findUserByName" resultType="com.yh.pojo.User">
+        select * from t_user where loginName=#{loginName}
+
+    </select>
+
+</mapper>

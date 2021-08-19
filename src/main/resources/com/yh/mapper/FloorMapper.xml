@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yh.dao.FloorMapper">
+
+    <select id="findFloorList" resultType="com.yh.pojo.Floor">
+        select * from t_floor
+        <where>
+            <if test="name!=null and name!=''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+
+    </select>
+
+    <insert id="addFloor" parameterType="com.yh.pojo.Floor">
+        insert into t_floor(name, remark) VALUES (#{name},#{remark})
+    </insert>
+
+    <update id="updateFloor" parameterType="com.yh.pojo.Floor">
+        update t_floor
+        <set>
+            <if test="name!=null and name!=''">
+                name = #{name},
+            </if>
+            <if test="remark!=null and remark!=''">
+                remark = #{remark},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+</mapper>

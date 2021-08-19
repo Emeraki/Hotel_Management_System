@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yh.dao.DeptMapper">
+
+    <select id="findDeptByPage" parameterType="com.yh.vo.DeptVo" resultType="com.yh.pojo.Department">
+        select * from sys_dept
+        <where>
+            <if test="dept_name != null and dept_name!= ''">
+                and dept_name like concat('%',#{dept_name},'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="addDept">
+        insert into sys_dept(`dept_name`,`address`,`create_time`,`remark`)
+        values (#{dept_name},#{address},#{create_time},#{remark})
+    </insert>
+
+    <update id="updateDept">
+        update sys_dept
+        <set>
+            <if test="dept_name != null and dept_name!= ''">
+                dept_name = #{dept_name},
+            </if>
+            <if test="address != null and address!= ''">
+                address = #{address},
+            </if>
+            <if test="remark!= null and remark!= ''">
+                remark = #{remark},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteDeptById">
+        delete from sys_dept where id=#{id}
+    </delete>
+
+    <select id="findDeptList" resultType="com.yh.pojo.Department">
+        select * from sys_dept
+    </select>
+
+</mapper>

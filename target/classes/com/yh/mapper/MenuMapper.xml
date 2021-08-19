@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yh.dao.MenuMapper">
+
+    <!--查询所有菜单-->
+    <select id="findMenuList" resultType="com.yh.pojo.Menu">
+        select *
+        from sys_menu
+    </select>
+
+    <select id="findMenuListByEmployeeId" parameterType="int" resultType="com.yh.pojo.Menu">
+        select DISTINCT t1.*
+        from sys_menu as t1
+                 inner join sys_role_menu as t2
+                            on t2.mid = t1.id
+                 inner join sys_role_employee as t3
+                            on t3.rid = t2.rid
+        where t3.eid = #{id}
+    </select>
+
+    <!--根据角色id查询菜单id-->
+    <select id="findMenuIdListByRoleId" resultType="Integer">
+        select mid
+        from sys_role_menu
+        where rid = #{id}
+    </select>
+
+    <!--根据菜单id查询菜单信息-->
+    <select id="findMenuByMenuId" resultType="com.yh.pojo.Menu">
+        select * from sys_menu where id in
+        <foreach collection="list" item="menuId" open="(" separator="," close=")">
+            #{menuId}
+        </foreach>
+    </select>
+
+    <select id="findMenuListByPage" resultType="com.yh.pojo.Menu">
+        select * from sys_menu
+        <where>
+            <if test="id != null">
+                and id=#{id} or pid=#{id}
+            </if>
+        </where>
+        order by id
+    </select>
+
+    <insert id="addMenu" parameterType="com.yh.pojo.Menu">
+        insert into sys_menu(pid, title, href, spread, target, icon)
+        VALUES (#{pid}, #{title}, #{href}, #{spread}, #{target}, #{icon})
+    </insert>
+
+    <update id="updateMenu" parameterType="com.yh.pojo.Menu">
+        update sys_menu
+        <set>
+            <if test="pid != null">
+                pid=#{pid},
+            </if>
+            <if test="title != null and title != ''">
+                title=#{title},
+            </if>
+            <if test="href != null and href != ''">
+                href=#{href},
+            </if>
+            <if test="spread != null">
+                spread=#{spread},
+            </if>
+            <if test="target != null and target != ''">
+                target=#{target},
+            </if>
+            <if test="icon != null and icon != ''">
+                icon=#{icon},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="menuHaveChild" resultType="int">
+        select count(1)
+        from sys_menu
+        where pid = #{id}
+    </select>
+
+    <delete id="deleteMenu" parameterType="int">
+        delete
+        from sys_menu
+        where id = #{id}
+    </delete>
+
+</mapper>

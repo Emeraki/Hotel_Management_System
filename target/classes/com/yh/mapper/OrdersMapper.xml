@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yh.dao.OrdersMapper">
+    
+    <!--这里不太一样，定义了一个resultMap-->
+    <!-- 定义基础的ResultMap -->
+    <resultMap id="BaseResultMap" type="com.yh.pojo.Orders">
+        <id column="id" property="id" />
+        <result column="ordersNo"  property="ordersno" />
+        <result column="accountId" property="accountid" />
+        <result column="roomTypeId"  property="roomtypeid" />
+        <result column="roomId"  property="roomid" />
+        <result column="reservationName" property="reservationname" />
+        <result column="idCard" property="idcard" />
+        <result column="phone" property="phone" />
+        <result column="status"  property="status" />
+        <result column="reserveDate"  property="reservedate" />
+        <result column="arriveDate"  property="arrivedate" />
+        <result column="leaveDate" property="leavedate" />
+        <result column="reservePrice"  property="reserveprice" />
+        <result column="remark"  property="remark" />
+    </resultMap>
+
+    <resultMap id="ordersRoomAndTypeResultMap" type="com.yh.pojo.Orders" extends="BaseResultMap">
+        <!-- 配置订单与房间关系 -->
+        <association property="room" javaType="com.yh.pojo.Room">
+            <id column="id" property="id"/>
+            <result property="roomnum" column="roomnum"/>
+        </association>
+        <!-- 配置订单与房型关系 -->
+        <association property="roomType" javaType="com.yh.pojo.RoomType">
+            <id property="id" column="id"/>
+            <result property="typename" column="typename"/>
+        </association>
+    </resultMap>
+
+    <insert id="addOrders" parameterType="com.yh.pojo.Orders">
+        insert into t_orders(ordersNo, accountId, roomTypeId, roomId, reservationName, idCard, phone, status, reserveDate, arriveDate, leaveDate, reservePrice, remark)
+        VALUES (#{ordersno},#{accountid},#{roomtypeid},#{roomid},#{reservationname},#{idcard},#{phone},#{status},#{reservedate},#{arrivedate},#{leavedate},#{reserveprice},#{remark})
+    </insert>
+
+    <select id="findOrdersList" resultMap="ordersRoomAndTypeResultMap">
+        select o.*,r.roomNum,t.typeName from t_orders as o
+        inner join t_room as r on r.id=o.roomId
+        inner join t_room_type as t on t.id=r.roomTypeId
+        <where>
+            <if test="reservationname!=null and reservationname!=''">
+                and o.reservationname like concat('%',#{reservationname},'%')
+            </if>
+            <if test="idcard!=null and idcard!=''">
+                and o.idcard like concat('%',#{idcard},'%')
+            </if>
+            <if test="phone!=null and phone!=''">
+                and o.phone like concat('%',#{phone},'%')
+            </if>
+            <if test="roomtypeid!=null">
+                and o.roomtypeid = #{roomtypeid}
+            </if>
+            <if test="status!=null">
+                and o.status = #{status}
+            </if>
+            <if test="start!=null">
+                <![CDATA[ and o.reservedate >= #{start} ]]>
+            </if>
+            <if test="end!=null">
+                <![CDATA[ and o.reservedate <= #{end}]]>
+            </if>
+        </where>
+    </select>
+
+    <update id="confirmOrders" >
+        update t_orders set status=2 where id=#{id}
+    </update>
+
+    <update id="checkinOrders">
+        update t_orders set status=3 where id=#{id}
+    </update>
+
+    <update id="checkoutOrders">
+        update t_orders set t_orders.status=4 where id=(select t_checkin.ordersId from t_checkin where t_checkin.id=#{id})
+    </update>
+
+</mapper>
